@@ -13,10 +13,6 @@ def index(request):
     posts = Post.objects.filter(Q(title__icontains=q) | Q(body__icontains=q) | Q(author__username__icontains=q))
     return render(request, 'index.html', {'posts': posts})
 
-
-def login(request):
-    return render(request, 'loginPage.html')
-
 def register(request):
     if request.method == "POST":
         username = request.POST['username']
@@ -67,7 +63,7 @@ def post(request, pk):
     post = Post.objects.get(id=pk)
     return render(request, 'post.html', {'post': post})
 
-
+@login_required(login_url='login')
 def edit_post(request, pk):
     post = Post.objects.get(id=pk)
     if request.user != post.author:
@@ -81,3 +77,14 @@ def edit_post(request, pk):
         return redirect('index')
     else:
         return render(request, 'edit-post.html', {'post': post})
+    
+@login_required(login_url='login')
+def delete_post(request, pk):
+    post = Post.objects.get(id=pk)
+    if request.user != post.author:
+        return redirect('index')
+    if request.method == "POST":
+        post.delete()
+        return redirect('index')
+    else:
+        return render(request, 'delete-post.html', {'post': post})
