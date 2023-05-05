@@ -1,0 +1,4 @@
+.vscode
+__pycache__
+migrations/[0-9]*.py
+db.sqlite3
